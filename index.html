@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PrintPrep v1.0.3 — Druckvorbereitung</title>
-<!-- PrintPrep v1.0.3 · 2026-11-19 · by AL VOGELMANN -->
+<title>PrintPrep v1.0.4 — Druckvorbereitung</title>
+<!-- PrintPrep v1.0.4 · 2026-11-19 · by AL VOGELMANN -->
 <style>
 :root {
   --bg: #f1f5f9;
@@ -220,10 +220,35 @@ button.danger {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-.row-4 {
+.crop-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+.crop-item {
+  background: var(--surface-2);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.crop-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 6px;
+  margin-bottom: 2px;
+}
+.crop-head label {
+  font-size: .74rem;
+  font-weight: 600;
+}
+.crop-head input[type="number"] {
+  width: 54px;
+  min-height: 28px;
+  padding: 2px 5px;
+  font-size: .78rem;
+  text-align: right;
 }
 .seg {
   display: grid;
@@ -299,15 +324,29 @@ input[type="range"] {
   overflow: hidden;
   display: grid;
 }
-.a4-sheet.portrait {
+.a4-sheet.layout-1up {
   width: min(100%, 400px);
   aspect-ratio: 210 / 297;
   grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
 }
-.a4-sheet.landscape-2up {
+.a4-sheet.layout-2up {
   width: min(100%, 620px);
   aspect-ratio: 297 / 210;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+.a4-sheet.layout-4up {
+  width: min(100%, 440px);
+  aspect-ratio: 210 / 297;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.a4-sheet.layout-6up {
+  width: min(100%, 440px);
+  aspect-ratio: 210 / 297;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
 }
 .slot {
   position: relative;
@@ -441,19 +480,19 @@ dialog.info-modal p {
   <header class="topbar">
     <div class="brand">
       <h1>PrintPrep</h1>
-      <span class="tag">v1.0.3 · Druckvorbereitung</span>
+      <span class="tag">v1.0.4 · Druckvorbereitung</span>
     </div>
     <div class="top-actions">
       <label class="file-btn">
         Dateien wählen
         <input id="file-input" type="file" multiple accept="image/*,.heic,.heif,.pdf,.txt,.md,.csv,.doc,.docx,application/pdf,text/plain">
       </label>
-      <button id="about-btn" type="button" class="soft">PrintPrep v1.0.3</button>
+      <button id="about-btn" type="button" class="soft">PrintPrep v1.0.4</button>
     </div>
   </header>
 
   <dialog id="about-modal" class="info-modal" aria-label="Versionsinfo">
-    <p>PrintPrep v1.0.3 by AL VOGELMANN</p>
+    <p>PrintPrep v1.0.4 by AL VOGELMANN</p>
     <div style="display:flex;justify-content:center">
       <button id="about-close" type="button">Schließen</button>
     </div>
@@ -523,12 +562,36 @@ dialog.info-modal p {
         </div>
 
         <div class="field-group">
-          <span class="field-label">Beschnitt / Crop (%)</span>
-          <div class="row-4" style="margin-top:4px">
-            <div><label for="crop-t" style="font-size:.72rem">Oben</label><input id="crop-t" type="number" min="0" max="45" value="0"></div>
-            <div><label for="crop-b" style="font-size:.72rem">Unten</label><input id="crop-b" type="number" min="0" max="45" value="0"></div>
-            <div><label for="crop-l" style="font-size:.72rem">Links</label><input id="crop-l" type="number" min="0" max="45" value="0"></div>
-            <div><label for="crop-r" style="font-size:.72rem">Rechts</label><input id="crop-r" type="number" min="0" max="45" value="0"></div>
+          <span class="field-label">Beschnitt / Crop (%) — Live-Slider</span>
+          <div class="crop-grid">
+            <div class="crop-item">
+              <div class="crop-head">
+                <label for="crop-t-range">Oben</label>
+                <input id="crop-t" type="number" min="0" max="45" value="0" aria-label="Beschnitt Oben in Prozent">
+              </div>
+              <input id="crop-t-range" type="range" min="0" max="45" step="1" value="0">
+            </div>
+            <div class="crop-item">
+              <div class="crop-head">
+                <label for="crop-b-range">Unten</label>
+                <input id="crop-b" type="number" min="0" max="45" value="0" aria-label="Beschnitt Unten in Prozent">
+              </div>
+              <input id="crop-b-range" type="range" min="0" max="45" step="1" value="0">
+            </div>
+            <div class="crop-item">
+              <div class="crop-head">
+                <label for="crop-l-range">Links</label>
+                <input id="crop-l" type="number" min="0" max="45" value="0" aria-label="Beschnitt Links in Prozent">
+              </div>
+              <input id="crop-l-range" type="range" min="0" max="45" step="1" value="0">
+            </div>
+            <div class="crop-item">
+              <div class="crop-head">
+                <label for="crop-r-range">Rechts</label>
+                <input id="crop-r" type="number" min="0" max="45" value="0" aria-label="Beschnitt Rechts in Prozent">
+              </div>
+              <input id="crop-r-range" type="range" min="0" max="45" step="1" value="0">
+            </div>
           </div>
         </div>
 
@@ -560,10 +623,12 @@ dialog.info-modal p {
           <h2 class="card-title" style="margin:0">3. Druckbogen &amp; PDF-Ausgabe</h2>
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
             <label style="font-size:.86rem;font-weight:600;display:flex;align-items:center;gap:6px">
-              Layout:
+              Seiten pro Blatt:
               <select id="layout-mode" style="width:auto">
-                <option value="1up">1 Seite pro A4-Blatt (Hochformat)</option>
-                <option value="2up">2 Seiten auf 1 Blatt (A4 Querformat)</option>
+                <option value="1up">1 Seite (A4 hoch)</option>
+                <option value="2up">2 Seiten (A4 quer)</option>
+                <option value="4up">4 Seiten (2×2 A4 hoch)</option>
+                <option value="6up">6 Seiten (2×3 A4 hoch)</option>
               </select>
             </label>
             <button id="export-pdf" type="button" disabled>PDF erstellen</button>
@@ -591,12 +656,18 @@ dialog.info-modal p {
 
 <script>
 "use strict";
-// PrintPrep v1.0.3 · 2026-11-19 · by AL VOGELMANN
+// PrintPrep v1.0.4 · 2026-11-19 · by AL VOGELMANN
 
 const $ = id => document.getElementById(id);
 const A4_PORTRAIT = [595.28, 841.89];
 const A4_LANDSCAPE = [841.89, 595.28];
 const PRESETS = { passport: [35, 45], stamp: [25, 30] };
+const LAYOUT_SPECS = {
+  "1up": { perSheet: 1, cols: 1, rows: 1, sheetPt: A4_PORTRAIT,  cssClass: "layout-1up", label: "1 Seite / A4 hoch" },
+  "2up": { perSheet: 2, cols: 2, rows: 1, sheetPt: A4_LANDSCAPE, cssClass: "layout-2up", label: "2 Seiten / A4 quer" },
+  "4up": { perSheet: 4, cols: 2, rows: 2, sheetPt: A4_PORTRAIT,  cssClass: "layout-4up", label: "4 Seiten (2×2) / A4 hoch" },
+  "6up": { perSheet: 6, cols: 2, rows: 3, sheetPt: A4_PORTRAIT,  cssClass: "layout-6up", label: "6 Seiten (2×3) / A4 hoch" }
+};
 const numFmt = new Intl.NumberFormat("de-DE", { maximumFractionDigits: 1 });
 
 const state = {
@@ -605,6 +676,17 @@ const state = {
   layoutMode: "1up",
   pdfUrl: ""
 };
+
+function getLayoutMetrics(mode) {
+  const spec = LAYOUT_SPECS[mode] || LAYOUT_SPECS["1up"];
+  const sheetWmm = (spec.sheetPt[0] * 25.4) / 72;
+  const sheetHmm = (spec.sheetPt[1] * 25.4) / 72;
+  const slotWmm = sheetWmm / spec.cols;
+  const slotHmm = sheetHmm / spec.rows;
+  const maxW = slotWmm * 0.9;
+  const maxH = slotHmm * 0.92;
+  return { ...spec, sheetWmm, sheetHmm, slotWmm, slotHmm, maxW, maxH };
+}
 
 function defaultPage(name, sourceType, dataUrl, naturalWidth, naturalHeight) {
   return {
@@ -844,6 +926,10 @@ function syncControlsFromSelected() {
   $("crop-b").value = String(p.crop.bottom);
   $("crop-l").value = String(p.crop.left);
   $("crop-r").value = String(p.crop.right);
+  $("crop-t-range").value = String(p.crop.top);
+  $("crop-b-range").value = String(p.crop.bottom);
+  $("crop-l-range").value = String(p.crop.left);
+  $("crop-r-range").value = String(p.crop.right);
 
   $("in-contrast").value = String(p.contrast);
   $("val-contrast").textContent = `${p.contrast} %`;
@@ -909,29 +995,22 @@ function renderPreview() {
   }
   emptyHint.hidden = true;
 
-  const is2Up = state.layoutMode === "2up";
-  const maxW = is2Up ? 132 : 190;
-  const maxH = is2Up ? 185 : 277;
-  const slotWmm = is2Up ? 148.5 : 210;
-  const slotHmm = is2Up ? 210 : 297;
-
-  const validBoxes = state.pages.map(p => computePageBoxMm(p, maxW, maxH));
-  const perSheet = is2Up ? 2 : 1;
-  const totalSheets = Math.ceil(state.pages.length / perSheet);
+  const metrics = getLayoutMetrics(state.layoutMode);
+  const validBoxes = state.pages.map(p => computePageBoxMm(p, metrics.maxW, metrics.maxH));
+  const totalSheets = Math.ceil(state.pages.length / metrics.perSheet);
 
   for (let s = 0; s < totalSheets; s++) {
     const sheet = document.createElement("div");
-    sheet.className = "a4-sheet " + (is2Up ? "landscape-2up" : "portrait");
-    for (let k = 0; k < perSheet; k++) {
-      const idx = s * perSheet + k;
+    sheet.className = `a4-sheet ${metrics.cssClass}`;
+    for (let k = 0; k < metrics.perSheet; k++) {
+      const idx = s * metrics.perSheet + k;
       const slot = document.createElement("div");
       slot.className = "slot";
       if (idx < state.pages.length) {
         const p = state.pages[idx];
         const box = validBoxes[idx];
-        // Erlaubt Überstand über die Slot-/Blattgrenze; .slot schneidet Überstand ab
-        const pctW = (box.wMm / slotWmm) * 100;
-        const pctH = (box.hMm / slotHmm) * 100;
+        const pctW = (box.wMm / metrics.slotWmm) * 100;
+        const pctH = (box.hMm / metrics.slotHmm) * 100;
         slot.innerHTML = `
           <span class="slot-badge">Seite ${idx + 1}</span>
           <div class="slot-item" style="width:${pctW.toFixed(1)}%;height:${pctH.toFixed(1)}%;outline:${idx === state.selectedIndex ? "2px solid #0f766e" : "none"}">
@@ -952,7 +1031,7 @@ function renderPreview() {
   const p = currentPage();
   const box = validBoxes[state.selectedIndex] || validBoxes[0];
   setStatus(
-    `Seiten gesamt: ${state.pages.length} · Druckbögen: ${totalSheets} (${is2Up ? "2 Seiten / A4 quer" : "1 Seite / A4 hoch"})\n` +
+    `Seiten gesamt: ${state.pages.length} · Druckbögen: ${totalSheets} (${metrics.label})\n` +
     `Aktive Seite (${state.selectedIndex + 1}): ${p.name} → ca. ${numFmt.format(box.wMm)} × ${numFmt.format(box.hMm)} mm (Überstand wird abgeschnitten)`,
     false
   );
@@ -1021,21 +1100,16 @@ async function renderProcessedPageJpeg(page, maxW, maxH, slotWmm, slotHmm) {
 }
 
 async function buildCombinedPdf() {
-  const is2Up = state.layoutMode === "2up";
-  const [sheetWpt, sheetHpt] = is2Up ? A4_LANDSCAPE : A4_PORTRAIT;
-  const maxW = is2Up ? 132 : 190;
-  const maxH = is2Up ? 185 : 277;
-  const slotWmm = is2Up ? 148.5 : 210;
-  const slotHmm = is2Up ? 210 : 297;
+  const metrics = getLayoutMetrics(state.layoutMode);
+  const [sheetWpt, sheetHpt] = metrics.sheetPt;
   const mmToPt = mm => (mm * 72) / 25.4;
 
   const rendered = [];
   for (const p of state.pages) {
-    rendered.push(await renderProcessedPageJpeg(p, maxW, maxH, slotWmm, slotHmm));
+    rendered.push(await renderProcessedPageJpeg(p, metrics.maxW, metrics.maxH, metrics.slotWmm, metrics.slotHmm));
   }
 
-  const perSheet = is2Up ? 2 : 1;
-  const numSheets = Math.ceil(rendered.length / perSheet);
+  const numSheets = Math.ceil(rendered.length / metrics.perSheet);
   const encoder = new TextEncoder();
   const chunks = [];
   const offsets = [0];
@@ -1068,8 +1142,8 @@ async function buildCombinedPdf() {
     const pageObjId = nextId++;
     const contentObjId = nextId++;
     const slots = [];
-    for (let k = 0; k < perSheet; k++) {
-      const idx = s * perSheet + k;
+    for (let k = 0; k < metrics.perSheet; k++) {
+      const idx = s * metrics.perSheet + k;
       if (idx < rendered.length) {
         const imgObjId = nextId++;
         slots.push({ imgObjId, item: rendered[idx], slotIndex: k });
@@ -1082,21 +1156,20 @@ async function buildCombinedPdf() {
   const kidsRefs = sheetObjs.map(o => `${o.pageObjId} 0 R`).join(" ");
   addObj(() => pushStr(`<< /Type /Pages /Kids [${kidsRefs}] /Count ${sheetObjs.length} >>`));
 
+  const slotWpt = sheetWpt / metrics.cols;
+  const slotHpt = sheetHpt / metrics.rows;
+
   for (const so of sheetObjs) {
     const xObjEntries = so.slots.map(sl => `/Im${sl.imgObjId} ${sl.imgObjId} 0 R`).join(" ");
     let stream = "";
     for (const sl of so.slots) {
       const wPt = mmToPt(sl.item.wMm);
       const hPt = mmToPt(sl.item.hMm);
-      let cx, cy;
-      if (!is2Up) {
-        cx = sheetWpt / 2;
-        cy = sheetHpt / 2;
-      } else {
-        const halfW = sheetWpt / 2;
-        cx = sl.slotIndex === 0 ? halfW / 2 : halfW + halfW / 2;
-        cy = sheetHpt / 2;
-      }
+      const col = sl.slotIndex % metrics.cols;
+      const row = Math.floor(sl.slotIndex / metrics.cols);
+      const cx = col * slotWpt + slotWpt / 2;
+      // PDF-Koordinaten beginnen unten links; Zeile 0 liegt oben
+      const cy = sheetHpt - (row * slotHpt + slotHpt / 2);
       const xPt = cx - wPt / 2;
       const yPt = cy - hPt / 2;
       stream += `q\n${wPt.toFixed(3)} 0 0 ${hPt.toFixed(3)} ${xPt.toFixed(3)} ${yPt.toFixed(3)} cm\n/Im${sl.imgObjId} Do\nQ\n`;
@@ -1257,12 +1330,10 @@ $("in-lock").addEventListener("change", () => {
   const p = currentPage();
   if (!p) return;
   revokePdf();
-  const is2Up = state.layoutMode === "2up";
-  const maxW = is2Up ? 132 : 190;
-  const maxH = is2Up ? 185 : 277;
+  const metrics = getLayoutMetrics(state.layoutMode);
   p.widthMm = parseMmPositive($("in-w").value, 120);
   p.heightMm = parseMmPositive($("in-h").value, 170);
-  const box = computePageBoxMm(p, maxW, maxH);
+  const box = computePageBoxMm(p, metrics.maxW, metrics.maxH);
   if (p.lockAspect) {
     p.heightMm = box.hMm;
     $("in-h").value = numFmt.format(box.hMm);
@@ -1270,16 +1341,20 @@ $("in-lock").addEventListener("change", () => {
   renderAll();
 }));
 
-[["top", "crop-t"], ["bottom", "crop-b"], ["left", "crop-l"], ["right", "crop-r"]].forEach(([key, id]) => {
-  $(id).addEventListener("input", () => {
-    const p = currentPage();
-    if (!p) return;
-    revokePdf();
-    const v = Math.max(0, Math.min(45, Number($(id).value) || 0));
-    $(id).value = String(v);
-    p.crop[key] = v;
-    renderAll();
-  });
+function applyCropValue(key, rawVal) {
+  const p = currentPage();
+  if (!p) return;
+  revokePdf();
+  const v = Math.max(0, Math.min(45, Number(rawVal) || 0));
+  p.crop[key] = v;
+  $(`crop-${key[0]}`).value = String(v);
+  $(`crop-${key[0]}-range`).value = String(v);
+  renderAll();
+}
+
+[["top", "crop-t", "crop-t-range"], ["bottom", "crop-b", "crop-b-range"], ["left", "crop-l", "crop-l-range"], ["right", "crop-r", "crop-r-range"]].forEach(([key, numId, rangeId]) => {
+  $(rangeId).addEventListener("input", () => applyCropValue(key, $(rangeId).value));
+  $(numId).addEventListener("input", () => applyCropValue(key, $(numId).value));
 });
 
 [["contrast", "in-contrast", "val-contrast"], ["saturate", "in-saturate", "val-saturate"], ["brightness", "in-brightness", "val-brightness"]].forEach(([prop, inId, valId]) => {
@@ -1326,7 +1401,7 @@ $("export-pdf").addEventListener("click", async () => {
     revokePdf();
     state.pdfUrl = URL.createObjectURL(blob);
     $("download-link").href = state.pdfUrl;
-    $("download-link").download = state.layoutMode === "2up" ? "PrintPrep_2auf1.pdf" : "PrintPrep_A4.pdf";
+    $("download-link").download = `PrintPrep_${state.layoutMode}.pdf`;
     $("download-bar").hidden = false;
     setStatus("PDF erfolgreich erstellt. Du kannst es jetzt laden oder drucken.", false);
   } catch (err) {
